@@ -12,46 +12,65 @@
         }
 
         body {
-            background: #1a1a1a;
+            background: #0a0a0a;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             overflow: hidden;
+        }
+
+        .fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .clock-container {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             align-items: center;
         }
 
         .time-section {
             display: flex;
-            gap: 8px;
+            gap: 12px;
         }
 
         .separator {
-            font-size: 80px;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: bold;
+            font-size: 120px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 300;
             align-self: center;
-            margin: 0 5px;
+            margin: 0 10px;
         }
 
         .flip-card {
             position: relative;
-            width: 80px;
-            height: 100px;
-            perspective: 500px;
+            width: 140px;
+            height: 180px;
+            perspective: 1000px;
         }
 
         .flip-card-inner {
             position: relative;
             width: 100%;
             height: 100%;
-            transition: transform 0.6s;
+            transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
             transform-style: preserve-3d;
         }
 
@@ -64,15 +83,18 @@
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            background: #2d3748;
-            border-radius: 8px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+            border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 60px;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            font-size: 110px;
+            font-weight: 700;
+            color: #ffffff;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .flip-card-face::before {
@@ -81,8 +103,20 @@
             top: 50%;
             left: 0;
             right: 0;
-            height: 1px;
-            background: rgba(0, 0, 0, 0.2);
+            height: 2px;
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .flip-card-face::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.2) 100%);
+            border-radius: 0 0 12px 12px;
         }
 
         .flip-card-back {
@@ -90,29 +124,59 @@
         }
 
         .period {
-            font-size: 24px;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: bold;
-            margin-left: 10px;
+            font-size: 32px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 300;
+            margin-left: 15px;
             align-self: flex-end;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 800px) {
+            .flip-card {
+                width: 100px;
+                height: 140px;
+            }
+            .flip-card-face {
+                font-size: 80px;
+            }
+            .separator {
+                font-size: 90px;
+            }
+            .period {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
         }
 
         @media (max-width: 600px) {
             .flip-card {
-                width: 60px;
-                height: 80px;
+                width: 70px;
+                height: 100px;
             }
             .flip-card-face {
-                font-size: 45px;
+                font-size: 55px;
             }
             .separator {
                 font-size: 60px;
+            }
+            .period {
+                font-size: 18px;
+                margin-bottom: 15px;
+            }
+            .time-section {
+                gap: 8px;
+            }
+            .clock-container {
+                gap: 10px;
             }
         }
     </style>
 </head>
 <body>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+
     <div class="clock-container">
         <div class="time-section">
             <div class="flip-card" id="hour1">
@@ -150,6 +214,27 @@
     </div>
 
     <script>
+        // Fullscreen functionality
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Fullscreen error:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Hide fullscreen button when in fullscreen
+        document.addEventListener('fullscreenchange', () => {
+            const btn = document.querySelector('.fullscreen-btn');
+            if (document.fullscreenElement) {
+                btn.style.display = 'none';
+            } else {
+                btn.style.display = 'block';
+            }
+        });
+
         // Wake Lock API to prevent screen timeout
         let wakeLock = null;
 
@@ -189,7 +274,7 @@
                 setTimeout(() => {
                     front.textContent = newValue;
                     element.classList.remove('flipping');
-                }, 600);
+                }, 800);
             }
         }
 
@@ -241,6 +326,15 @@
             const event = new Event('touchstart');
             document.dispatchEvent(event);
         }, 30000); // Every 30 seconds
+
+        // Click anywhere to go fullscreen
+        let hasInteracted = false;
+        document.body.addEventListener('click', () => {
+            if (!hasInteracted && !document.fullscreenElement) {
+                hasInteracted = true;
+                toggleFullscreen();
+            }
+        });
     </script>
 </body>
 </html>
